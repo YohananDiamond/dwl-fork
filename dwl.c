@@ -3107,6 +3107,8 @@ main(int argc, char *argv[])
 	char *startup_cmd = NULL;
 	int c;
 
+	setenv("XDG_CURRENT_DESKTOP", "hyprland", 1);
+
 	while ((c = getopt(argc, argv, "s:hv")) != -1) {
 		if (c == 's')
 			startup_cmd = optarg;
