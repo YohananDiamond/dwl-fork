@@ -16,10 +16,10 @@ static const char *const autostart[] = {
 static const int tagcount = 9;
 
 static const Rule rules[] = {
-	/* app_id     title                tags mask     isfloating   monitor */
-	{ "float",    NULL,                1 << 8,       1,           -1 },
-	{ NULL,       "Task Manager",      1 << 8,       1,           -1 },
-	{ NULL,       "Sharing Indicator", 1 << 8,       1,           -1 },
+	/* app_id     title                tags_mask, center, float, monitor */
+	{ "float",    NULL,                0 << 8,    1,      1,     -1 },
+	{ NULL,       "Task Manager",      0 << 8,    1,      1,     -1 },
+	{ NULL,       "Sharing Indicator", 0 << 8,    1,      1,     -1 },
 };
 
 /* layout(s) */
@@ -114,10 +114,10 @@ static const Key keys[] = {
 	/* format: { modmask, keycode, function, argument } */
 
 	/* basic manipulation */
-	{ MODKEY,        XKB_KEY_q,     killclient,       {0} },
-	{ MODKEY|MSHIFT, XKB_KEY_space, togglefloating,   {0} },
-	{ MODKEY|MSHIFT, XKB_KEY_F,     togglefullscreen, {0} },
-	{ MODKEY|MALT,   XKB_KEY_E,     quit,             {0} }, /* TODO: is this working? and it should be SUPER+ALT+CTRL) */
+	{ MODKEY,            XKB_KEY_q,     killclient,       {0} },
+	{ MODKEY|MSHIFT,     XKB_KEY_space, togglefloating,   {0} },
+	{ MODKEY|MSHIFT,     XKB_KEY_F,     togglefullscreen, {0} },
+	{ MODKEY|MALT|MCTRL, XKB_KEY_e,     quit,             {0} }, /* TODO: is this working? and it should be SUPER+ALT+CTRL) */
 
 	/* set layout */
 	{ MODKEY,        XKB_KEY_Tab,   setlayout,      {.v = &layouts[0]} },
@@ -140,17 +140,38 @@ static const Key keys[] = {
 	{ MODKEY|MSHIFT|MALT, XKB_KEY_J, tagmon,   {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|MSHIFT|MALT, XKB_KEY_K, tagmon,   {.i = WLR_DIRECTION_LEFT} },
 
-	/* apps: terminals, menus & popups */
-	{ MODKEY,        XKB_KEY_space,  spawn, SHCMD("runnsend error-and-output fzrun") },
+	/* terminals / editors */
 	{ MODKEY,        XKB_KEY_Return, spawn, SHCMD("$TERMINAL") },
 	{ MODKEY|MSHIFT, XKB_KEY_Return, spawn, SHCMD("$TERMINAL -c float") },
-
-	{ MODKEY, XKB_KEY_w, spawn, SHCMD("setbg") },
 	{ MODKEY, XKB_KEY_e, spawn, SHCMD("graphedit") },
-	{ MODKEY, XKB_KEY_b, spawn, SHCMD("runnsend error $BROWSER") },
 
-	{ MODKEY,        XKB_KEY_c, spawn, SHCMD("runnsend error-and-output dotf.screenshot") },
-	{ MODKEY|MSHIFT, XKB_KEY_C, spawn, SHCMD("runnsend error-and-output dotf.screenshot --full") },
+	/* menus */
+	{ MODKEY,        XKB_KEY_space, spawn, SHCMD("runnsend error-and-output fzrun") },
+	{ MODKEY,        XKB_KEY_c,     spawn, SHCMD("runnsend error-and-output dotf.screenshot") },
+	{ MODKEY|MSHIFT, XKB_KEY_C,     spawn, SHCMD("runnsend error-and-output dotf.screenshot --full") },
+	{ MODKEY,        XKB_KEY_F10,   spawn, SHCMD("termup -f runread fzmount -m") },
+	{ MODKEY|MSHIFT,  XKB_KEY_F10,   spawn, SHCMD("termup -f runread fzmount -u") },
+	{ MODKEY|MALT,   XKB_KEY_o,     spawn, SHCMD("runnsend error-and-output fzpow") },
+
+	/* popups */
+	{ MODKEY|MALT,   XKB_KEY_m,     spawn, SHCMD("$TERMINAL -c float -e pulsemixer") },
+	{ MODKEY|MALT,   XKB_KEY_c,     spawn, SHCMD("$TERMINAL -c float -g 65x10 -e runread cal -3") },
+	{ MODKEY|MALT,   XKB_KEY_p,     spawn, SHCMD("$TERMINAL -c float -e calc") },
+
+	/* minor utils */
+	{ MODKEY,      XKB_KEY_w,      spawn, SHCMD("setbg") },
+	{ MODKEY,      XKB_KEY_comma,  spawn, SHCMD("volumectl dec") },
+	{ MODKEY,      XKB_KEY_period, spawn, SHCMD("volumectl inc") },
+	{ MODKEY,      XKB_KEY_y,      spawn, SHCMD("volumectl togglemute") },
+	{ MODKEY|MALT, XKB_KEY_comma,  spawn, SHCMD("playerctl previous") },
+	{ MODKEY|MALT, XKB_KEY_period, spawn, SHCMD("playerctl next") },
+	{ MODKEY|MALT, XKB_KEY_y,      spawn, SHCMD("playerctl play-pause") },
+	{ MODKEY,      XKB_KEY_minus,  spawn, SHCMD("backlightctl mod -5") },
+	{ MODKEY,      XKB_KEY_equal,  spawn, SHCMD("backlightctl mod 5") },
+	{ MODKEY,      XKB_KEY_F12,    spawn, SHCMD("wl-redscr toggle") },
+
+	/* apps */
+	{ MODKEY, XKB_KEY_b, spawn, SHCMD("runnsend error $BROWSER") },
 
 	{ MODKEY,          XKB_KEY_0,           view, {.ui = ~0} },
 	{ MODKEY|MSHIFT,   XKB_KEY_parenright,  tag,  {.ui = ~0} },
